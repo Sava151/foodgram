@@ -10,7 +10,7 @@ from recipes.models import Ingredient
 class Command(BaseCommand):
     # python manage.py load_ingredients
     # docker compose exec backend python manage.py load_ingredients
-    hepl = "Загружает JSON-данные об ингредиентах в базу"
+    help = "Загружает JSON-данные об ингредиентах в базу"
 
     def handle(self, *args, **options):
         file_path = os.path.join(
@@ -28,5 +28,8 @@ class Command(BaseCommand):
                         measurement_unit=item['measurement_unit']
                     )
                 )
-            Ingredient.objects.bulk_create(ingredients_to_create)
+            Ingredient.objects.bulk_create(
+                ingredients_to_create,
+                ignore_conflicts=True
+            )
         self.stdout.write(self.style.SUCCESS('Данные загружены!'))

@@ -1,25 +1,22 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth import get_user_model
+from django.db.models import Count
 
-from users.models import Favorite, Follow, ShoppingCart, User
+from users.models import Favorite, Follow, ShoppingCart
 from .models import Ingredient, Recipes, RecipeIngredient, Tag
 
-
-@admin.register(User)
-class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name')
-    search_fields = ('username', 'email')
-    list_filter = ('is_staff', 'is_superuser', 'is_active')
+User = get_user_model()
 
 
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
     extra = 1
+    min_num = 1
 
 
 @admin.register(Recipes)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author',)
+    list_display = ('name', 'author', 'favorite_count',)
     search_fields = ('name', 'author__username')
     list_filter = ('tags',)
     inlines = [RecipeIngredientInline]
@@ -27,7 +24,12 @@ class RecipeAdmin(admin.ModelAdmin):
 
     @admin.display(description='Количество добавлений в избранное')
     def favorite_count(self, obj):
-        return Favorite.objects.filter(recipe=obj).count()
+        return obj.favorite_count
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(favorite_count=Count('favorited_by'))
+        return queryset
 
 
 @admin.register(Ingredient)

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -43,6 +44,12 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'measurement_unit'],
+                name='unique_Ingredient_item'
+            )
+        ]
 
     def __str__(self):
         return self.name
@@ -78,13 +85,14 @@ class Recipes(models.Model):
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления',
         validators=[
-            MaxValueValidator(constants.RECIPES_MAX_COOKING_TIME),
-            MinValueValidator(constants.RECIPES_MIN_COOKING_TIME)
+            MaxValueValidator(constants.RECIPES_MAX_VALUE_VALIDATOR),
+            MinValueValidator(constants.RECIPES_MIN_VALUE_VALIDATOR)
         ]
     )
     short_code = models.CharField(
         max_length=constants.RECIPES_SHORT_CODE,
         unique=True,
+        blank=True
     )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
@@ -95,6 +103,15 @@ class Recipes(models.Model):
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         ordering = ['-pub_date']
+
+    def save(self, *args, **kwargs):
+        if not self.short_code:
+            while True:
+                code = get_random_string(length=20)
+                if not Recipes.objects.filter(short_code=code).exists():
+                    self.short_code = code
+                    break
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -112,6 +129,18 @@ class RecipeIngredient(models.Model):
         on_delete=models.CASCADE,
         related_name='ingredients_recipe'
     )
-    amount = models.IntegerField(
-        verbose_name='Количество'
+    amount = models.PositiveSmallIntegerField(
+        verbose_name='Количество',
+        validators=[
+            MaxValueValidator(constants.RECIPES_MAX_VALUE_VALIDATOR),
+            MinValueValidator(constants.RECIPES_MIN_VALUE_VALIDATOR)
+        ]
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_recipe_ingredient_item'
+            )
+        ]

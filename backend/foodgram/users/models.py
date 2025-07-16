@@ -7,6 +7,7 @@ from .constants import USER_MAX_LENGHT
 
 class User(AbstractUser):
     """Модель Пользователя"""
+
     username_validator = RegexValidator(
         regex=r'^[\w.@+-]+\Z',
         message=(
@@ -38,6 +39,12 @@ class User(AbstractUser):
         null=True,
         default=None
     )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = [
+        'username',
+        'first_name',
+        'last_name'
+    ]
 
     class Meta:
         ordering = ('username',)
