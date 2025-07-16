@@ -19,5 +19,9 @@ v1_router.register('ingredients', IngredientViewSet, basename='ingredients')
 urlpatterns = [
     path('', include(v1_router.urls)),
     path('auth/token/login/', TokenCreateView.as_view(), name='token-login'),
-    path('auth/token/logout/', TokenDestroyView.as_view(), name='token-logout'),
+    path(
+        'auth/token/logout/',
+        TokenDestroyView.as_view(),
+        name='token-logout'
+    ),
 ]
