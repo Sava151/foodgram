@@ -15,7 +15,7 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
   backend:
-    build: ./backend/foodgram/
+    build: ./backend/
     env_file: .env
     volumes:
       - media:/backend_media
