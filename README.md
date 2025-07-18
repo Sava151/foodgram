@@ -55,6 +55,7 @@ python manage.py runserver
 * djangorestframework_simplejwt
 * djoser
 
-
+### Ссылка на сам проект
+[Foodgram](https://foodgram151.zapto.org/recipes)
 ### Об авторе
 [Sava151](https://github.com/Sava151)

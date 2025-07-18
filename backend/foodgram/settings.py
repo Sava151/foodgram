@@ -24,7 +24,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'false') == 'true'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split()
@@ -82,7 +81,6 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
 
 DATABASES = {
     'default': {
@@ -173,3 +171,5 @@ DJOSER = {
         'user': ['rest_framework.permissions.AllowAny'],
     },
 }
+
+DEFAULT_PAGE_SIZE = 10

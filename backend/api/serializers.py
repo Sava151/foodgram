@@ -138,13 +138,6 @@ class SaveRecipeIngredientSerializer(serializers.ModelSerializer):
         model = RecipeIngredient
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
-    def validate_amount(self, value):
-        if value <= 0:
-            raise serializers.ValidationError(
-                'Количество ингредиента не может быть меньше или равно нулю'
-            )
-        return value
-
 
 class RecipesListDetailSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)

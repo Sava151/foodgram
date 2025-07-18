@@ -23,7 +23,7 @@ from recipes.models import (
 from users.models import Favorite, Follow, ShoppingCart
 from .filters import IngredientFilter, RecipeFilter
 from .permission import AuthorOrReadOnly
-from .pagination import LimitPagination, LimitOffsetPaginationWithDefault
+from .pagination import LimitPagination
 from .serializers import (
     AvatarSerializer,
     IngredientSerializer,
@@ -100,29 +100,20 @@ class UserViewSet(DjoserUserViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
-        else:
-            if user.avatar:
-                user.avatar.delete(save=False)
-                user.avatar = None
-                user.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        if user.avatar:
+            user.avatar.delete(save=False)
+            user.avatar = None
+            user.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=True,
-        methods=['post', 'delete'],
+        methods=['post'],
         permission_classes=[IsAuthenticated]
     )
     def subscribe(self, request, id=None):
         author = get_object_or_404(User, pk=id)
-        print(author)
         user = request.user
-
-        if request.method == 'POST':
-            return self.subscribe_user(user, author)
-        elif request.method == 'DELETE':
-            return self.unsubscribe_user(user, author)
-
-    def subscribe_user(self, user, author):
         if user == author:
             return Response(
                 {'error': 'Нельзя подписаться на себя'},
@@ -136,26 +127,33 @@ class UserViewSet(DjoserUserViewSet):
             )
 
         Follow.objects.create(user=user, following=author)
+        recipes_limit = request.query_params.get('recipes_limit')
 
-        recipes_limit = self.request.query_params.get('recipes_limit')
         serializer = UserSubscribeSerializer(
             author,
             context={
-                'request': self.request,
+                'request': request,
                 'recipes_limit': recipes_limit
             }
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def unsubscribe_user(self, user, author):
-        follow = Follow.objects.filter(user=user, following=author).first()
-        if not follow:
+    @subscribe.mapping.delete
+    def unsubscribe(self, request, id=None):
+        author = get_object_or_404(User, pk=id)
+        user = request.user
+
+        deleted_count, _ = Follow.objects.filter(
+            user=user,
+            following=author
+        ).delete()
+
+        if not deleted_count:
             return Response(
                 {'error': 'Подписка не найдена'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        follow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
@@ -194,7 +192,7 @@ class UserViewSet(DjoserUserViewSet):
 
 class RecipesViewSet(viewsets.ModelViewSet):
     permission_classes = (AuthorOrReadOnly,)
-    pagination_class = LimitOffsetPaginationWithDefault
+    pagination_class = LimitPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
@@ -214,7 +212,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     def _add_relation(self, request, pk, relation_model, error_message):
         recipe = get_object_or_404(Recipes, pk=pk)
-        relation, created = relation_model.objects.get_or_create(
+        _, created = relation_model.objects.get_or_create(
             user=request.user,
             recipe=recipe
         )
@@ -286,7 +284,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def get_short_link(self, request, pk=None):
         recipe = self.get_object()
         domain = request.build_absolute_uri('/')[:-1]
-        short_link = f"{domain}/api/s/{recipe.short_code}"
+        short_link = f"{domain}/s/{recipe.short_code}"
         return Response({"short-link": short_link}, status=status.HTTP_200_OK)
 
     @action(

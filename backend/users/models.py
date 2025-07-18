@@ -22,7 +22,6 @@ class User(AbstractUser):
         validators=[username_validator]
     )
     email = models.EmailField(
-        blank=False,
         unique=True,
         verbose_name='Электроння почта'
     )
