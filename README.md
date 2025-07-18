@@ -39,7 +39,7 @@ python manage.py migrate
 ```
 python manage.py runserver
 ```
-## [Документация по Api](http://127.0.0.1:8000/redoc/) 
+
 ### Некоторые примеры запросов 
 1. [Get запрос список пользователей](https://foodgram151.zapto.org/api/users/)
 2. [Get запрос список рецептов](https://foodgram151.zapto.org/api/recipes/)
