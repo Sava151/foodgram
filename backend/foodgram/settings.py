@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'false') == 'true'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split()
-
+DOMAIN = ALLOWED_HOSTS[0] if ALLOWED_HOSTS else 'localhost'
 # Application definition
 
 INSTALLED_APPS = [
