@@ -39,19 +39,34 @@ PostgreSQL для хранения данных;
 Docker для контейнеризации приложения.
 
 ## Основные сущности
+## ER Diagram
+
+```mermaid
 erDiagram
 
 USER ||--o{ RECIPE : creates
 
-USER ||--o{ FAVORITE : adds
+USER ||--o{ FAVORITE : has
 
-USER ||--o{ SHOPPING_CART : adds
+USER ||--o{ SHOPPING_CART : has
 
 USER ||--o{ SUBSCRIPTION : follows
 
-RECIPE }o--o{ INGREDIENT : contains
+RECIPE ||--o{ FAVORITE : saved
+
+RECIPE ||--o{ SHOPPING_CART : added
+
+RECIPE ||--o{ RECIPE_INGREDIENT : contains
+
+INGREDIENT ||--o{ RECIPE_INGREDIENT : used_in
 
 RECIPE }o--o{ TAG : tagged
+
+USER {
+    int id
+    string username
+    string email
+}
 
 RECIPE {
     int id
@@ -70,6 +85,7 @@ TAG {
     string name
     string slug
 }
+```
 
 # Установка. 
 ## Следуйте следующим команда для установки и развертывание проекта у себя локально 
