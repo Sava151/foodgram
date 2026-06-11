@@ -38,6 +38,39 @@ ORM Django для работы с базой данных;
 PostgreSQL для хранения данных;
 Docker для контейнеризации приложения.
 
+## Основные сущности
+erDiagram
+
+USER ||--o{ RECIPE : creates
+
+USER ||--o{ FAVORITE : adds
+
+USER ||--o{ SHOPPING_CART : adds
+
+USER ||--o{ SUBSCRIPTION : follows
+
+RECIPE }o--o{ INGREDIENT : contains
+
+RECIPE }o--o{ TAG : tagged
+
+RECIPE {
+    int id
+    string name
+    int cooking_time
+}
+
+INGREDIENT {
+    int id
+    string name
+    string measurement_unit
+}
+
+TAG {
+    int id
+    string name
+    string slug
+}
+
 # Установка. 
 ## Следуйте следующим команда для установки и развертывание проекта у себя локально 
 ### Клонировать репозиторий и перейти в него в командной строке:
