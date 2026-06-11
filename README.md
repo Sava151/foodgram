@@ -11,6 +11,18 @@ Backend API для сервиса публикации рецептов.
 ## Проект реализует API на базе **Django rest_framework**.
 ## Архитектура проекта
 
+Проект построен по принципу разделения ответственности:
+
+- users — управление пользователями
+- recipes — рецепты и ингредиенты
+- subscriptions — подписки на авторов
+- favorites — избранное
+- shopping_cart — список покупок
+
+Клиент взаимодействует с REST API.
+API работает через Django REST Framework.
+Данные хранятся в PostgreSQL.
+
 Проект построен на Django REST Framework и использует многослойную архитектуру.
 ```
 Client
@@ -124,19 +136,6 @@ python manage.py migrate
 ```
 python manage.py runserver
 ```
-## Архитектура
-
-Проект построен по принципу разделения ответственности:
-
-- users — управление пользователями
-- recipes — рецепты и ингредиенты
-- subscriptions — подписки на авторов
-- favorites — избранное
-- shopping_cart — список покупок
-
-Клиент взаимодействует с REST API.
-API работает через Django REST Framework.
-Данные хранятся в PostgreSQL.
 
 ## Технологический стек
 
