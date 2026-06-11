@@ -1,6 +1,14 @@
 # Описание.
+# Foodgram
+
+Backend API для сервиса публикации рецептов.
+
+Пользователи могут:
+- создавать рецепты;
+- подписываться на авторов;
+- добавлять рецепты в избранное;
+- формировать список покупок.
 ## Проект реализует API на базе **Django rest_framework**.
-### Какого то глубокого смысла или пользы он не несет это просто учебный проект 
 
 # Установка. 
 ## Следуйте следующим команда для установки и развертывание проекта у себя локально 
@@ -39,23 +47,30 @@ python manage.py migrate
 ```
 python manage.py runserver
 ```
+## Архитектура
 
-### Некоторые примеры запросов 
-1. [Get запрос список пользователей](https://foodgram151.zapto.org/api/users/)
-2. [Get запрос список рецептов](https://foodgram151.zapto.org/api/recipes/)
-2. [Get запрос список ингредиентов с фильтрацией](https://foodgram151.zapto.org/api/ingredients/?name=sometext)
+Проект построен по принципу разделения ответственности:
 
+- users — управление пользователями
+- recipes — рецепты и ингредиенты
+- subscriptions — подписки на авторов
+- favorites — избранное
+- shopping_cart — список покупок
 
-# Стек технологий 
-## Версия Python 3.9
-## Сторонние библиотеки
-* Django
-* djangorestframework
-* django-filter  
-* djangorestframework_simplejwt
-* djoser
+Клиент взаимодействует с REST API.
+API работает через Django REST Framework.
+Данные хранятся в PostgreSQL.
 
-### Ссылка на сам проект
-[Foodgram](https://foodgram151.zapto.org/recipes)
+## Технологический стек
+
+- Python 3.12
+- Django
+- Django REST Framework
+- PostgreSQL
+- Docker
+- Nginx
+- Gunicorn
+- JWT (Djoser + SimpleJWT)
+
 ### Об авторе
 [Sava151](https://github.com/Sava151)
